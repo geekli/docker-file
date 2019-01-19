@@ -1,0 +1,18 @@
+FROM ubuntu:16.04
+
+RUN sed -i 's/\/\/archive\.u/\/\/cn\.archive\.u/g' /etc/apt/sources.list && \
+    mkdir ~/.pip && printf '[global]\nindex-url = http://mirrors.aliyun.com/pypi/simple/ \n[install]\ntrusted-host=mirrors.aliyun.com' >~/.pip/pip.conf && \
+    apt-get update && apt-get install vim net-tools iputils-ping curl apt-transport-https tzdata locales -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# set timezone
+#RUN apt-get install tzdata -y 
+ENV TZ  Asia/Shanghai
+RUN echo $TZ > /etc/timezone && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+
+# set locales
+#RUN apt-get install locales -y 
+RUN locale-gen en_US.UTF-8 && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales && locale-gen en_US.UTF-8  
+ENV LANG=en_US.UTF-8  LANGUAGE=en_US:zh  LC_ALL=en_US.UTF-8
